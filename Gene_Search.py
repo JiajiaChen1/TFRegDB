@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 import cgi
 import cgitb
 import subprocess
@@ -10,6 +10,17 @@ form = cgi.FieldStorage()
 query = form.getvalue("genesearch")
 if query == None:
     query = ""
+else:
+    if len(query)==15:
+        if query.find('ENSG')!=-1:
+            text='This is an <a href=''https://useast.ensembl.org/info/genome/stable_ids/index.html''> ENSEMBL stable Gene ID</a>. Click <a href=''https://www.genecards.org/cgi-bin/carddisp.pl?gene=%s''> here </a> for more information.'% (query)
+            query=text
+        elif query.find('ENST')!=-1:
+            text='This is an <a href=''https://useast.ensembl.org/info/genome/stable_ids/index.html''> ENSEMBL Transcript ID</a>. Results:  %s'% (query)
+            query=text
+    else:
+        text='%s is either a HGNC Gene Symbol or a Uniprot name, Proceed.' % (query)
+        query=text
 print("""
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -47,8 +58,8 @@ print("""
           <h2>Gene Search</h2>
           <p>Although the name of this search engine is gene search, you can search for a specific protein by entering ENSEMBL transcript id and Uniprot ID.</p>
           <p>Input your HGNC Official Gene Symbol/Ensembl Gene ID/ENSEMBL Transcript ID/Uniprot ID to search for one gene or one isoform of one gene</p>
-          <form action='Gene_Search.py' method="post" id="GeneSearch">
-            <div><textarea name="genesearch" form="genesearch" style="text-transform: uppercase; font-family: courier; height: 50px; width: 300px;"></textarea></div>
+          <form action='Gene_Search.py' method="post" id="genesearch">
+            <div><textarea name="genesearch" form="genesearch" style="text-transform: uppercase; font-family: courier; height: 50px; width: 300px;">Enter you ID here</textarea></div>
             <div><input type="submit" style="width: 80;" value="Search"/></div>
           </form>
           <div class="result">
@@ -136,4 +147,4 @@ print("""
 </div>
 </body>
 </html>
-""" % ((query))
+""" % (query))
